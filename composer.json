@@ -1,0 +1,29 @@
+{
+    "name": "damianociarla/social-connect-bundle",
+    "description": "The DCSOAuthBundle integrates HWIOAuthBundle with FOSUserBundle in Symfony2 and allows users to login/register to your site using third party authentication.",
+    "type": "library",
+    "keywords": [
+        "symfony2","FOSUserBundle","HWIOAuthBundle","social","connect","register","login"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/damianociarla/DCSOAuthBundle",
+    "authors": [
+        {
+            "name": "Damiano Ciarla",
+            "email": "damiano.ciarla@gmail.com",
+            "homepage": "http://www.damianociarla.it/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "symfony/symfony": "2.3.*",
+        "doctrine/orm": ">=2.2.3",
+        "doctrine/doctrine-bundle": "1.2.*",
+        "friendsofsymfony/user-bundle": "2.0.*@dev",
+        "hwi/oauth-bundle": "0.4.*@dev"
+    },
+    "autoload": {
+        "psr-0": { "DCS\\DCSOAuthBundle": "" }
+    },
+    "target-dir": "DCS/DCSOAuthBundle"
+}

@@ -1,0 +1,18 @@
+parameters:
+    dcs_oauth.provider.class: DCS\OAuthBundle\Security\Core\User\FOSUBUserProvider
+    dcs_oauth.model.manager.class: DCS\OAuthBundle\Model\SocialManager
+
+services:
+    dcs_oauth.user_social_repository:
+        class: Doctrine\Common\Persistence\ObjectRepository
+        arguments: [%dcs_oauth.user_class%]
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+
+    dcs_oauth.model.manager:
+        class: %dcs_oauth.model.manager.class%
+        arguments: [@doctrine.orm.entity_manager, @dcs_oauth.user_social_repository]
+
+    dcs_oauth.provider:
+        class: %dcs_oauth.provider.class%
+        arguments: [@fos_user.user_manager, @dcs_oauth.model.manager]

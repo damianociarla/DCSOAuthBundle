@@ -1,0 +1,52 @@
+<?php
+
+namespace LF\User\SocialBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass="LF\User\SocialBundle\Entity\Repository\SocialAuth")
+ * @ORM\Table(name="users_social_auth")
+ */
+class UserSocialAuth
+{
+    /**
+     * @var \LF\User\CoreBundle\Entity\User
+     *
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="LF\User\CoreBundle\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    protected $user;
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(name="provider", type="string", nullable=false)
+     */
+    protected $provider;
+
+    /**
+     * @ORM\Column(name="uid", type="string", nullable=false)
+     */
+    protected $uid;
+
+    /**
+     * @ORM\Column(name="access_token", type="string", nullable=false)
+     */
+    protected $accessToken;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
+     */
+    protected $updatedAt;
+    
+}
