@@ -1,5 +1,5 @@
 {
-    "name": "damianociarla/dcs-aouth-bundle",
+    "name": "damianociarla/dcs-oauth-bundle",
     "description": "The DCSOAuthBundle integrates HWIOAuthBundle with FOSUserBundle in Symfony2 and allows users to login/register to your site using third party authentication.",
     "type": "library",
     "keywords": [
