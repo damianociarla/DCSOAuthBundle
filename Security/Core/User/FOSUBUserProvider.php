@@ -89,8 +89,6 @@ class FOSUBUserProvider extends BaseClass
             if (null !== $email = $response->getEmail()) {
                 // Check if exists a user with the email found from the provider
                 $user = $this->userManager->findUserByEmail($email);
-
-                $this->dispatcher->dispatch(Events::BEFORE_UPDATE_EXISTING_USER, new Event\UserEvent($user, $response));
             }
 
             if (null === $user) {
@@ -102,6 +100,8 @@ class FOSUBUserProvider extends BaseClass
                 $user->setEnabled(true);
 
                 $this->dispatcher->dispatch(Events::BEFORE_CREATE_NEW_USER, new Event\UserEvent($user, $response));
+            } else {
+                $this->dispatcher->dispatch(Events::BEFORE_UPDATE_EXISTING_USER, new Event\UserEvent($user, $response));
             }
 
             $user->setLoginProvider($provider);
