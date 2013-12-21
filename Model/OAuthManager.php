@@ -3,11 +3,11 @@
 namespace DCS\OAuthBundle\Model;
 
 use Doctrine\ORM\EntityManager;
-use DCS\OAuthBundle\Entity\UserSocialAuth;
+use DCS\OAuthBundle\Entity\UserOAuthInfo;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 
-class SocialManager
+class OAuthManager
 {
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -26,41 +26,41 @@ class SocialManager
     }
 
     /**
-     * Crea una nuova istanza della classe social
+     * Create a new instance of UserOAuthInfo
      *
-     * @return DCS\OAuthBundle\Entity\UserSocialAuth
+     * @return DCS\OAuthBundle\Entity\UserOAuthInfo
      */
-    public function createUserSocial()
+    public function createUserOAuthInfo()
     {
         $class = $this->repository->getClassName();
         return new $class();
     }
 
     /**
-     * Crea o aggiorna l'utente social
+     * Create or update an instance of UserOAuthInfo
      *
-     * @param \DCS\OAuthBundle\Entity\UserSocialAuth $userSocialAuth
-     * @return \DCS\OAuthBundle\Entity\UserSocialAuth
+     * @param \DCS\OAuthBundle\Entity\UserOAuthInfo $userOAuthInfo
+     * @return \DCS\OAuthBundle\Entity\UserOAuthInfo
      */
-    public function updateUserSocialAuth(UserSocialAuth $userSocialAuth)
+    public function updateUserOAuthInfo(UserOAuthInfo $userOAuthInfo)
     {
-        $this->em->persist($userSocialAuth);
+        $this->em->persist($userOAuthInfo);
         $this->em->flush();
 
-        return $userSocialAuth;
+        return $userOAuthInfo;
     }
 
     public function findByProviderAndUid($provider, $uid)
     {
         $qb = $this->em
             ->createQueryBuilder()
-            ->select('usa, u')
-            ->from($this->repository->getClassName(), 'usa')
-            ->join('usa.user', 'u')
-            ->where('usa.provider = :usa_provider')
-            ->setParameter('usa_provider', $provider)
-            ->andWhere('usa.uid = :usa_uid')
-            ->setParameter('usa_uid', $uid)
+            ->select('uoai, u')
+            ->from($this->repository->getClassName(), 'uoai')
+            ->join('uoai.user', 'u')
+            ->where('uoai.provider = :uoai_provider')
+            ->setParameter('uoai_provider', $provider)
+            ->andWhere('uoai.uid = :uoai_uid')
+            ->setParameter('uoai_uid', $uid)
         ;
 
         try {

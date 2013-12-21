@@ -8,10 +8,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\MappedSuperclass
  */
-abstract class UserSocialAuth implements UserInterface
+abstract class UserOAuthInfo implements UserInterface
 {
     /**
-     * @var \DCS\OAuthBundle\Entity\UserSocial
+     * @var \DCS\OAuthBundle\Entity\User
      */
     protected $user;
 
@@ -57,7 +57,7 @@ abstract class UserSocialAuth implements UserInterface
      * Set provider
      *
      * @param string $provider
-     * @return UserSocialAuth
+     * @return UserOAuthInfo
      */
     public function setProvider($provider)
     {
@@ -80,7 +80,7 @@ abstract class UserSocialAuth implements UserInterface
      * Set uid
      *
      * @param string $uid
-     * @return UserSocialAuth
+     * @return UserOAuthInfo
      */
     public function setUid($uid)
     {
@@ -103,7 +103,7 @@ abstract class UserSocialAuth implements UserInterface
      * Set username
      *
      * @param string $username
-     * @return UserSocialAuth
+     * @return UserOAuthInfo
      */
     public function setUsername($username)
     {
@@ -126,7 +126,7 @@ abstract class UserSocialAuth implements UserInterface
      * Set accessToken
      *
      * @param string $accessToken
-     * @return UserSocialAuth
+     * @return UserOAuthInfo
      */
     public function setAccessToken($accessToken)
     {
@@ -149,7 +149,7 @@ abstract class UserSocialAuth implements UserInterface
      * Set raw
      *
      * @param string $raw
-     * @return UserSocialAuth
+     * @return UserOAuthInfo
      */
     public function setRaw($raw)
     {
@@ -172,7 +172,7 @@ abstract class UserSocialAuth implements UserInterface
      * Set createdAt
      *
      * @param \DateTime $createdAt
-     * @return UserSocialAuth
+     * @return UserOAuthInfo
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -195,7 +195,7 @@ abstract class UserSocialAuth implements UserInterface
      * Set user
      *
      * @param \FOS\UserBundle\Model\UserInterface $user
-     * @return UserSocialAuth
+     * @return UserOAuthInfo
      */
     public function setUser(\FOS\UserBundle\Model\UserInterface $user)
     {

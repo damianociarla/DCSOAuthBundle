@@ -26,12 +26,12 @@ use FOS\UserBundle\Model\User as BaseUser;
  *      )
  * })
  */
-abstract class UserSocial extends BaseUser
+abstract class User extends BaseUser
 {
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      */
-    protected $socialsAuth;
+    protected $oauthInfos;
 
     /**
      * @var string
@@ -49,7 +49,7 @@ abstract class UserSocial extends BaseUser
     {
         parent::__construct();
 
-        $this->socialsAuth = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->oauthInfos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->loginProviderUsername = '';
     }
 
@@ -102,46 +102,46 @@ abstract class UserSocial extends BaseUser
  }
 
     /**
-     * Add socialsAuth
+     * Add userOAuthInfo
      *
-     * @param \DCS\OAuthBundle\Entity\UserSocialAuth $socialsAuth
+     * @param \DCS\OAuthBundle\Entity\UserOAuthInfo $userOAuthInfo
      * @return User
      */
-    public function addSocialsAuth(\DCS\OAuthBundle\Entity\UserSocialAuth $socialsAuth)
+    public function addUserOAuthInfo(\DCS\OAuthBundle\Entity\UserOAuthInfo $userOAuthInfo)
     {
-        $this->socialsAuth[] = $socialsAuth;
+        $this->oauthInfos[] = $userOAuthInfo;
 
         return $this;
     }
 
     /**
-     * Remove socialsAuth
+     * Remove userOAuthInfo
      *
-     * @param \DCS\OAuthBundle\Entity\UserSocialAuth $socialsAuth
+     * @param \DCS\OAuthBundle\Entity\UserOAuthInfo $userOAuthInfo
      */
-    public function removeSocialsAuth(\DCS\OAuthBundle\Entity\UserSocialAuth $socialsAuth)
+    public function removeUserOAuthInfo(\DCS\OAuthBundle\Entity\UserOAuthInfo $userOAuthInfo)
     {
-        $this->socialsAuth->removeElement($socialsAuth);
+        $this->oauthInfos->removeElement($userOAuthInfo);
     }
 
     /**
-     * Get socialsAuth
+     * Get oauthInfos
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getSocialsAuth()
+    public function getUserOAuthInfo()
     {
-        if (null == $this->socialsAuth)
-            $this->socialsAuth = new \Doctrine\Common\Collections\ArrayCollection();
+        if (null == $this->oauthInfos)
+            $this->oauthInfos = new \Doctrine\Common\Collections\ArrayCollection();
 
-        return $this->socialsAuth;
+        return $this->oauthInfos;
    }
 
     /**
      * Set loginProvider
      *
      * @param string $loginProvider
-     * @return \DCS\OAuthBundle\Entity\UserSocial
+     * @return \DCS\OAuthBundle\Entity\User
      */
     public function setLoginProvider($loginProvider)
     {
@@ -176,9 +176,9 @@ abstract class UserSocial extends BaseUser
         if (!empty($this->loginProviderUsername))
             return $this->loginProviderUsername;
 
-        foreach ($this->getSocialsAuth() as $socialAuth) {
-            if ($socialAuth->getProvider() === $this->loginProvider) {
-                return $socialAuth->getUsername();
+        foreach ($this->getUserOAuthInfo() as $userOAuthInfo) {
+            if ($userOAuthInfo->getProvider() === $this->loginProvider) {
+                return $userOAuthInfo->getUsername();
             }
         }
 

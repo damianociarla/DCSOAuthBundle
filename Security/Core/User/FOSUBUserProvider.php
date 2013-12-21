@@ -5,21 +5,32 @@ namespace DCS\OAuthBundle\Security\Core\User;
 use HWI\Bundle\OAuthBundle\OAuth\Response\UserResponseInterface;
 use HWI\Bundle\OAuthBundle\Security\Core\User\FOSUBUserProvider as BaseClass;
 use Symfony\Component\Security\Core\User\UserInterface;
-use DCS\OAuthBundle\Model\SocialManager;
+use DCS\OAuthBundle\Model\OAuthManager;
 use FOS\UserBundle\Model\UserManagerInterface;
+use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
+use DCS\OAuthBundle\Events;
 
 class FOSUBUserProvider extends BaseClass
 {
     /**
-     * @var \DCS\OAuthBundle\Model\SocialManager
+     * @var \DCS\OAuthBundle\Model\OAuthManager
      */
-    protected $socialManager;
+    protected $oauthManager;
 
-    public function __construct(UserManagerInterface $userManager, SocialManager $socialManager)
-    {
+    /**
+     * @var \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
+     */
+    private $dispatcher;
+
+    public function __construct(
+        UserManagerInterface $userManager,
+        OAuthManager $oauthManager,
+        ContainerAwareEventDispatcher $dispatcher
+    ) {
         parent::__construct($userManager, array());
 
-        $this->socialManager = $socialManager;
+        $this->oauthManager = $oauthManager;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -30,29 +41,29 @@ class FOSUBUserProvider extends BaseClass
         $provider = $response->getResourceOwner()->getName();
         $uid = $response->getUsername();
 
-        $userSocialAuth = $this->socialManager->findByProviderAndUid($provider, $uid);
+        $userOAuthInfo = $this->oauthManager->findByProviderAndUid($provider, $uid);
 
-        if (null === $userSocialAuth) {
+        if (null === $userOAuthInfo) {
             $user->addRole('ROLE_'.strtoupper($provider));
 
-            $userSocialAuth = $this->socialManager->createUserSocial();
-            $userSocialAuth->setUser($user);
-            $userSocialAuth->setProvider($provider);
-            $userSocialAuth->setUid($uid);
-            $userSocialAuth->setUsername($response->getNickname());
-            $userSocialAuth->setAccessToken($response->getAccessToken());
-            $userSocialAuth->setRaw(serialize($response->getResponse()));
+            $userOAuthInfo = $this->oauthManager->createUserOAuthInfo();
+            $userOAuthInfo->setUser($user);
+            $userOAuthInfo->setProvider($provider);
+            $userOAuthInfo->setUid($uid);
+            $userOAuthInfo->setUsername($response->getNickname());
+            $userOAuthInfo->setAccessToken($response->getAccessToken());
+            $userOAuthInfo->setRaw(serialize($response->getResponse()));
 
-            $user->addSocialsAuth($userSocialAuth);
+            $user->addUserOAuthInfo($userOAuthInfo);
 
             $this->userManager->updateUser($user);
         } else {
-            $userSocialAuth->setUser($user);
-            $userSocialAuth->setUsername($response->getNickname());
-            $userSocialAuth->setAccessToken($response->getAccessToken());
-            $userSocialAuth->setRaw(serialize($response->getResponse()));
+            $userOAuthInfo->setUser($user);
+            $userOAuthInfo->setUsername($response->getNickname());
+            $userOAuthInfo->setAccessToken($response->getAccessToken());
+            $userOAuthInfo->setRaw(serialize($response->getResponse()));
 
-            $this->socialManager->updateUserSocialAuth($userSocialAuth);
+            $this->oauthManager->updateUserOAuthInfo($userOAuthInfo);
         }
     }
 
@@ -64,12 +75,12 @@ class FOSUBUserProvider extends BaseClass
         $provider = $response->getResourceOwner()->getName();
         $uid = $response->getUsername();
 
-        $userSocialAuth = $this->socialManager->findByProviderAndUid($provider, $uid);
+        $userOAuthInfo = $this->oauthManager->findByProviderAndUid($provider, $uid);
 
         // Eventually it will be an object of type User
         $user = null;
 
-        if (null === $userSocialAuth) {
+        if (null === $userOAuthInfo) {
             if (null !== $email = $response->getEmail()) {
                 // Check if exists a user with the email found from the provider
                 $user = $this->userManager->findUserByEmail($email);
@@ -90,20 +101,20 @@ class FOSUBUserProvider extends BaseClass
             // Add or update user data
             $this->userManager->updateUser($user);
 
-            $userSocialAuth = $this->socialManager->createUserSocial();
-            $userSocialAuth->setUser($user);
-            $userSocialAuth->setProvider($provider);
-            $userSocialAuth->setUid($uid);
-            $userSocialAuth->setUsername($response->getNickname());
-            $userSocialAuth->setAccessToken($response->getAccessToken());
-            $userSocialAuth->setRaw(serialize($response->getResponse()));
+            $userOAuthInfo = $this->oauthManager->createUserOAuthInfo();
+            $userOAuthInfo->setUser($user);
+            $userOAuthInfo->setProvider($provider);
+            $userOAuthInfo->setUid($uid);
+            $userOAuthInfo->setUsername($response->getNickname());
+            $userOAuthInfo->setAccessToken($response->getAccessToken());
+            $userOAuthInfo->setRaw(serialize($response->getResponse()));
 
-            $user->addSocialsAuth($userSocialAuth);
+            $user->addUserOAuthInfo($userOAuthInfo);
 
             $this->userManager->updateUser($user);
 
         } else {
-            $user = $userSocialAuth->getUser();
+            $user = $userOAuthInfo->getUser();
 
             // Update login provider
             if ($provider !== $user->getLoginProvider()) {
@@ -111,10 +122,10 @@ class FOSUBUserProvider extends BaseClass
                 $this->userManager->updateUser($user);
             }
 
-            $userSocialAuth->setAccessToken($response->getAccessToken());
-            $userSocialAuth->setRaw(serialize($response->getResponse()));
+            $userOAuthInfo->setAccessToken($response->getAccessToken());
+            $userOAuthInfo->setRaw(serialize($response->getResponse()));
 
-            $this->socialManager->updateUserSocialAuth($userSocialAuth);
+            $this->oauthManager->updateUserOAuthInfo($userOAuthInfo);
         }
 
         return $user;
